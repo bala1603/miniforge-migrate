@@ -51,9 +51,10 @@ jobs:
             conda env remove -n "$env"
         done
 
-        # Remove conda command from PATH
-        sed -i '/conda/d' ~/.bashrc
-        sed -i '/condabin/d' ~/.bashrc
+        # Cleanup miniconda paths
+        echo "Removing Miniconda from PATH..."
+        export PATH=$(echo $PATH | tr ':' '\n' | grep -v "miniconda" | tr '\n' ':' | sed 's/:$//')
+        echo "PATH=$PATH" >> $GITHUB_ENV
         
         # Apply the changes to PATH
         source ~/.bashrc
