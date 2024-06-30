@@ -55,10 +55,6 @@ jobs:
         echo "Removing Miniconda from PATH..."
         export PATH=$(echo $PATH | tr ':' '\n' | grep -v "miniconda" | tr '\n' ':' | sed 's/:$//')
         echo "PATH=$PATH" >> $GITHUB_ENV
-        
-        # Apply the changes to PATH
-        source ~/.bashrc
-
 
     - name: Install Miniforge
       run: |
