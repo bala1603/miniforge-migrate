@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# Set the folder where you want to save the environment files
+
 export_folder="$HOME/miniconda_envs_backup"
 mkdir -p "$export_folder"
 
-# Export all conda environments to respective env.yml files
-echo "Exporting all conda environments..."
+# Export envs to a folder
 for env in $(conda env list | awk '{print $1}' | grep -v "#")
 do
     echo "Exporting environment: $env"
@@ -24,8 +23,6 @@ do
 done
 
 # Uninstall Miniconda
-echo "Uninstalling Miniconda..."
-# Remove the Miniconda directory
 miniconda_dir=$(conda info --base)
 rm -rf "$miniconda_dir"
 
@@ -40,5 +37,3 @@ rm -rf ~/.continuum
 
 # Apply the changes to PATH
 source ~/.bashrc
-
-echo "Miniconda and all environments have been removed completely."
