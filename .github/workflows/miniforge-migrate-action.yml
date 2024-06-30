@@ -43,9 +43,6 @@ jobs:
             conda env export -n "$env" > "$export_folder/$env.yml"
         done
 
-        # Deactivate any active conda environment
-        conda deactivate
-
         # Delete all conda environments
         echo "Deleting all conda environments..."
         for env in $(conda env list | awk '{print $1}' | grep -v "#" | grep -v "base")
