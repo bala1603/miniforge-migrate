@@ -85,7 +85,7 @@ jobs:
     - name: Recreate environments in Miniforge
       shell: bash -l {0}
       run: |
-        source "${HOME}/conda/etc/profile.d/conda.sh"
+        # source "${HOME}/conda/etc/profile.d/conda.sh"
         # Recreate environments
         for env_file in /home/runner/miniconda_envs_backup/*.yml; do
           env_name=$(basename "$env_file" .yml)
