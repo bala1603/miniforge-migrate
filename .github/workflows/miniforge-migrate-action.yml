@@ -3,7 +3,7 @@ name: Conda to Miniforge Migration
 on:
   pull_request:
     branches: 
-      - main
+      - branch
 
 jobs:
   migrate:
