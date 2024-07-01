@@ -34,7 +34,6 @@ jobs:
     - name: Backup and cleanup conda
       run: |
         export_folder="$HOME/miniconda_envs_backup"
-        echo "$export_folder"
         mkdir -p "$export_folder"
 
         # Export envs to a folder
@@ -43,6 +42,8 @@ jobs:
             echo "Exporting environment: $env"
             conda env export -n "$env" > "$export_folder/$env.yml"
         done
+
+        ls /home/runner/miniconda_envs_backup
 
         # Delete all conda environments
         echo "Deleting all conda environments..."
@@ -61,7 +62,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: miniconda-envs-backup
-        path: $HOME/miniconda_envs_backup/
+        path: /home/runner/miniconda_envs_backup
 
     - name: Miniforge wget
       run: |
