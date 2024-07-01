@@ -2,8 +2,8 @@ name: Conda to Miniforge Migration
 
 on:
   pull_request:
-    branches: 
-      - branch
+    branches:
+      - main
 
 jobs:
   migrate:
@@ -17,7 +17,7 @@ jobs:
     - name: Create and export Miniconda environments
       shell: bash -l {0}
       run: |
-        mkdir env_files
+        mkdir -p env_files
 
         # Create and export environment 1
         conda create -n env1 python=3.8 numpy pandas -y
@@ -45,7 +45,7 @@ jobs:
             fi
         done
 
-        ls /home/runner/miniconda_envs_backup
+        ls "$export_folder"
 
         # Delete all conda environments
         echo "Deleting all conda environments..."
@@ -68,7 +68,7 @@ jobs:
 
     - name: Miniforge wget
       run: |
-          wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+        wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
 
     - name: Miniforge bash
       run: |
@@ -78,23 +78,24 @@ jobs:
 
     - name: conda info
       run: |
+        source "${HOME}/conda/etc/profile.d/conda.sh"
         conda info
         conda list
 
     - name: Recreate environments in Miniforge
       shell: bash -l {0}
       run: |
+        source "${HOME}/conda/etc/profile.d/conda.sh"
         # Recreate environments
         for env_file in /home/runner/miniconda_envs_backup/*.yml; do
-          echo "$env_file"
-          echo "$env_name"
-          # env_name=$(basename $env_file .yml)
-          # conda env create -f $env_file -n $env_name
+          env_name=$(basename "$env_file" .yml)
+          conda env create -f "$env_file" -n "$env_name"
         done
 
     - name: Verify Miniforge environments
       shell: bash -l {0}
       run: |
+        source "${HOME}/conda/etc/profile.d/conda.sh"
         conda env list
         conda activate env1
         python -c "import numpy; import pandas; print('env1 OK')"
