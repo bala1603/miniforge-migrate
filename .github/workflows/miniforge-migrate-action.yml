@@ -56,6 +56,12 @@ jobs:
         export PATH=$(echo $PATH | tr ':' '\n' | grep -v "miniconda" | tr '\n' ':' | sed 's/:$//')
         echo "PATH=$PATH" >> $GITHUB_ENV
 
+    - name: Upload environment files
+      uses: actions/upload-artifact@v3
+      with:
+        name: miniconda-envs-backup
+        path: $HOME/miniconda_envs_backup/
+
     - name: Miniforge wget
       run: |
           wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
@@ -90,9 +96,3 @@ jobs:
         python -c "import numpy; import pandas; print('env1 OK')"
         conda activate env2
         python -c "import scipy; import matplotlib; print('env2 OK')"
-
-    - name: Upload environment files
-      uses: actions/upload-artifact@v3
-      with:
-        name: miniconda-envs-backup
-        path: $HOME/miniconda_envs_backup/
