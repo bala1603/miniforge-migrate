@@ -39,8 +39,10 @@ jobs:
         # Export envs to a folder
         for env in $(conda env list | awk '{print $1}' | grep -v "#")
         do
-            echo "Exporting environment: $env"
-            conda env export -n "$env" > "$export_folder/$env.yml"
+            if [ "$env" != "test" ]; then
+              echo "Exporting environment: $env"
+              conda env export -n "$env" > "$export_folder/$env.yml"
+            fi
         done
 
         ls /home/runner/miniconda_envs_backup
