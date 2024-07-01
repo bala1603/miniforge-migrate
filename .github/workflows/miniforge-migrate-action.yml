@@ -34,6 +34,7 @@ jobs:
     - name: Backup and cleanup conda
       run: |
         export_folder="$HOME/miniconda_envs_backup"
+        echo "$export_folder"
         mkdir -p "$export_folder"
 
         # Export envs to a folder
