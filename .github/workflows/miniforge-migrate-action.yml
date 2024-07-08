@@ -10,63 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v3
-
-    - name: Create and export Miniconda environments
-      shell: bash -l {0}
-      run: |
-        mkdir -p env_files
-
-        # Create and export environment 1
-        conda create -n env1 python=3.8 numpy pandas -y
-        conda activate env1
-        conda env export > env_files/env1.yml
-        conda deactivate
-
-        # Create and export environment 2
-        conda create -n env2 python=3.9 scipy matplotlib -y
-        conda activate env2
-        conda env export > env_files/env2.yml
-        conda deactivate
-
-    - name: Backup and cleanup conda
-      run: |
-        export_folder="$HOME/miniconda_envs_backup"
-        mkdir -p "$export_folder"
-
-        # Export envs to a folder
-        for env in $(conda env list | awk '{print $1}' | grep -v "#")
-        do
-            if [ "$env" != "test" ]; then
-              echo "Exporting environment: $env"
-              conda env export -n "$env" > "$export_folder/$env.yml"
-            fi
-        done
-
-        ls "$export_folder"
-
-        # Delete all conda environments
-        echo "Deleting all conda environments..."
-        for env in $(conda env list | awk '{print $1}' | grep -v "#" | grep -v "base")
-        do
-            echo "Deleting environment: $env"
-            conda env remove -n "$env"
-        done
-
-        # Cleanup miniconda paths
-        echo "Removing Miniconda from PATH..."
-        export PATH=$(echo $PATH | tr ':' '\n' | grep -v "miniconda" | tr '\n' ':' | sed 's/:$//')
-        echo "PATH=$PATH" >> $GITHUB_ENV
-        echo "$GITHUB_ENV"
-
-    - name: Upload environment files
-      uses: actions/upload-artifact@v3
-      with:
-        name: miniconda-envs-backup
-        path: /home/runner/miniconda_envs_backup
-
+    
     - name: Miniforge wget
       run: |
         wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
@@ -83,13 +27,18 @@ jobs:
         conda info
         conda list
 
+    - name: Tree view
+      run: |
+          sudo apt-get install -y tree
+          tree .
+
     - name: Recreate environments in Miniforge
       shell: bash -l {0}
       run: |
         source "${HOME}/conda/etc/profile.d/conda.sh"
         
         # Recreate environments
-        for env_file in /home/runner/miniconda_envs_backup/*.yml; do
+        for env_file in ./miniconda_envs_backup/*.yml; do
           env_name=$(basename "$env_file" .yml)
           conda env create -f "$env_file" -n "$env_name"
         done
